@@ -1,0 +1,7 @@
+htmltools
+ipyleaflet
+matplotlib
+pandas
+plotly
+shiny
+shinywidgets
