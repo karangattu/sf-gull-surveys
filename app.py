@@ -33,7 +33,7 @@ app_ui = ui.page_fluid(
             "type",
             label="Graph type",
             choices=[
-                "Total Number of nests",
+                "Total number of nests",
                 "empty nests",
                 "1 egg nests",
                 "2 egg nests",
@@ -89,8 +89,9 @@ def server(input, output, session):
             yaxis=dict(
                 title=input.type(), title_font=dict(size=22), tickfont=dict(size=20)
             ),
-            plot_bgcolor="linen",
+            plot_bgcolor="whitesmoke",
         )
+        fig.update_layout(modebar_remove=["autoScale2d", "autoscale", "editInChartStudio", "editinchartstudio", "hoverCompareCartesian", "hovercompare", "lasso", "lasso2d", "orbitRotation", "orbitrotation", "pan", "pan2d", "pan3d", "reset", "resetCameraDefault3d", "resetCameraLastSave3d", "resetGeo", "resetSankeyGroup", "resetScale2d", "resetViewMapbox", "resetViews", "resetcameradefault", "resetcameralastsave", "resetsankeygroup", "resetscale", "resetview", "resetviews", "select", "select2d", "sendDataToCloud", "senddatatocloud", "tableRotation", "tablerotation", "toImage", "toggleHover", "toggleSpikelines", "togglehover", "togglespikelines", "toimage", "zoom", "zoom2d", "zoom3d", "zoomIn2d", "zoomInGeo", "zoomInMapbox", "zoomOut2d", "zoomOutGeo", "zoomOutMapbox", "zoomin", "zoomout"])
         return fig
 
     def read_csv_file():
@@ -102,7 +103,7 @@ def server(input, output, session):
         return L.Map(
             center=(37.495605832194876, -122.08810091916739),
             min_zoom=12,
-            max_zoom=15,
+            max_zoom=16,
             zoom=12,
             scroll_wheel_zoom=True,
             close_popup_on_click=False,
@@ -137,7 +138,7 @@ def server(input, output, session):
         def _on_click(**kwargs):
             map_click_value.set(f"Clicked on {marker.title}")
             map.center = marker.location
-            map.zoom = 15
+            map.zoom = 16
             bird_selected.set(row["Survey Location"])
 
         def _mouse_over(**kwargs):
