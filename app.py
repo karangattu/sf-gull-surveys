@@ -17,15 +17,19 @@ app_ui = ui.page_fluid(
             10, ui.h3("California Gull Nest Surveys in SF Bay Area", align="center")
         ),
     ),
-    output_widget("map"),
     ui.row(
+        ui.column(6, output_widget("map")),
         ui.column(
-            1, ui.input_action_button("reset", "Reset", class_="btn-secondary")
+            6,
+            output_widget("graph_widget"),
         ),
+    ),
+    ui.row(
+        ui.column(1, ui.input_action_button("reset", "Reset", class_="btn-secondary")),
         ui.column(
             6,
             ui.h4(
-                "Click on any gull colony location to see the graph below",
+                "Click on any gull colony location to see the individual graph",
                 align="center",
             ),
         ),
@@ -48,9 +52,11 @@ app_ui = ui.page_fluid(
             gap="2rem",
         ),
     ),
-    ui.div(
-        output_widget("graph_widget"),
+    ui.h6(
+        "Note: 2020 survey data is missing due to COVID-19 regulations",
+        align="center",
     ),
+    output_widget("graph_total_numbers"),
 )
 
 
@@ -91,7 +97,38 @@ def server(input, output, session):
             ),
             plot_bgcolor="whitesmoke",
         )
-        fig.update_layout(modebar_remove=["autoScale2d", "autoscale", "editInChartStudio", "editinchartstudio", "hoverCompareCartesian", "hovercompare", "lasso", "lasso2d", "orbitRotation", "orbitrotation", "pan", "pan2d", "pan3d", "reset", "resetCameraDefault3d", "resetCameraLastSave3d", "resetGeo", "resetSankeyGroup", "resetScale2d", "resetViewMapbox", "resetViews", "resetcameradefault", "resetcameralastsave", "resetsankeygroup", "resetscale", "resetview", "resetviews", "select", "select2d", "sendDataToCloud", "senddatatocloud", "tableRotation", "tablerotation", "toImage", "toggleHover", "toggleSpikelines", "togglehover", "togglespikelines", "toimage", "zoom", "zoom2d", "zoom3d", "zoomIn2d", "zoomInGeo", "zoomInMapbox", "zoomOut2d", "zoomOutGeo", "zoomOutMapbox", "zoomin", "zoomout"])
+        fig.update_layout(modebar_remove=modebar_config)
+        return fig
+
+    @output
+    @render_widget
+    def graph_total_numbers():
+        fig = go.Figure()
+        fig.add_trace(
+            go.Scatter(
+                x=df["Year"],
+                y=sum_nests_by_year,
+                text=f"Total number of nests",
+                mode="lines+markers",
+                connectgaps=False,
+                marker=dict(size=5, line=dict(width=5, color="royalblue")),
+                line=dict(shape="spline", width=5, color="mediumspringgreen"),
+                # fill="tonexty",
+            )
+        )
+
+        # Configure the layout
+        fig.update_layout(
+            title=f"Total number of nests across all the colonies",
+            xaxis=dict(title="Year", title_font=dict(size=22), tickfont=dict(size=20)),
+            yaxis=dict(
+                title="Total number of nests",
+                title_font=dict(size=22),
+                tickfont=dict(size=20),
+            ),
+            plot_bgcolor="whitesmoke",
+        )
+        fig.update_layout(modebar_remove=modebar_config)
         return fig
 
     def read_csv_file():
@@ -101,7 +138,7 @@ def server(input, output, session):
 
     def initialize_map():
         return L.Map(
-            center=(37.495605832194876, -122.08810091916739),
+            center=(37.48696974073399, -122.06649978185528),
             min_zoom=12,
             max_zoom=16,
             zoom=12,
@@ -124,6 +161,62 @@ def server(input, output, session):
     map_click_value = reactive.Value(None)
     bird_selected = reactive.Value(None)
     df = read_csv_file()
+    df_filled = df.fillna(0)
+    sum_nests_by_year = df.groupby("Year")["Total number of nests"].sum()
+    # Since 2020 data is not available due to COVID regulations, we will add a row with None value
+    sum_nests_by_year.loc[2020] = None
+    modebar_config = [
+        "autoScale2d",
+        "autoscale",
+        "editInChartStudio",
+        "editinchartstudio",
+        "hoverCompareCartesian",
+        "hovercompare",
+        "lasso",
+        "lasso2d",
+        "orbitRotation",
+        "orbitrotation",
+        "pan",
+        "pan2d",
+        "pan3d",
+        "reset",
+        "resetCameraDefault3d",
+        "resetCameraLastSave3d",
+        "resetGeo",
+        "resetSankeyGroup",
+        "resetScale2d",
+        "resetViewMapbox",
+        "resetViews",
+        "resetcameradefault",
+        "resetcameralastsave",
+        "resetsankeygroup",
+        "resetscale",
+        "resetview",
+        "resetviews",
+        "select",
+        "select2d",
+        "sendDataToCloud",
+        "senddatatocloud",
+        "tableRotation",
+        "tablerotation",
+        "toImage",
+        "toggleHover",
+        "toggleSpikelines",
+        "togglehover",
+        "togglespikelines",
+        "toimage",
+        "zoom",
+        "zoom2d",
+        "zoom3d",
+        "zoomIn2d",
+        "zoomInGeo",
+        "zoomInMapbox",
+        "zoomOut2d",
+        "zoomOutGeo",
+        "zoomOutMapbox",
+        "zoomin",
+        "zoomout",
+    ]
     icon = create_icon()
     map = initialize_map()
 
