@@ -111,8 +111,8 @@ def server(input, output, session):
                 text=f"Total number of nests",
                 mode="lines+markers",
                 connectgaps=False,
-                marker=dict(size=5, line=dict(width=5, color="royalblue")),
-                line=dict(shape="spline", width=5, color="mediumspringgreen"),
+                marker=dict(size=5, line=dict(width=5, color="darkmagenta")),
+                line=dict(shape="spline", width=5, color="yellowgreen"),
                 # fill="tonexty",
             )
         )
